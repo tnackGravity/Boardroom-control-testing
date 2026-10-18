@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- pwa-only:start -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1b1613">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Boardroom">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<!-- pwa-only:end -->
+<title>Boardroom Control Panel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Touch control for the boardroom AV system: start and end meetings, choose sources for each display, and set the room volume.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..800&family=Instrument+Sans:wght@400..700&display=swap">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<!-- Inline icon sprite: every icon is drawn from these symbols -->
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></symbol>
+  <symbol id="i-display" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="12.5" rx="1.5"/><path d="M8.5 20.5h7M12 16.5v4"/></symbol>
+  <symbol id="i-both" viewBox="0 0 24 24"><rect x="1.5" y="6" width="9.5" height="7" rx="1"/><rect x="13" y="6" width="9.5" height="7" rx="1"/><path d="M4 17h4M16 17h4M6 13v4M18 13v4"/></symbol>
+  <symbol id="i-laptop" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="10.5" rx="1.2"/><path d="M2 19h20l-1.6-3.5H3.6z"/></symbol>
+  <symbol id="i-wireless" viewBox="0 0 24 24"><path d="M3.5 9.5a12 12 0 0 1 17 0"/><path d="M6.6 12.7a7.6 7.6 0 0 1 10.8 0"/><path d="M9.7 15.9a3.2 3.2 0 0 1 4.6 0"/><circle cx="12" cy="19" r=".9"/></symbol>
+  <symbol id="i-pc" viewBox="0 0 24 24"><rect x="2.5" y="4" width="13" height="10" rx="1.2"/><path d="M6 18h6M9 14v4"/><rect x="18" y="4" width="3.5" height="14" rx=".8"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="13" height="11" rx="1.6"/><path d="m15.5 10.5 6-3.5v10l-6-3.5z"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="13" rx="1.5"/><path d="m8 2.5 4 3.5 4-3.5"/></symbol>
+  <symbol id="i-hdmi" viewBox="0 0 24 24"><path d="M3 8h18v5l-2.5 3h-13L3 13z"/><path d="M7 11h10"/></symbol>
+  <symbol id="i-blank" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="12.5" rx="1.5"/><path d="m5 6.5 14 7.5"/><path d="M8.5 20.5h7"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4.2 4.2 0 0 1 0 6"/><path d="M18.3 6.3a8 8 0 0 1 0 11.4"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="m16 9.5 5 5M21 9.5l-5 5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-sources" viewBox="0 0 24 24"><rect x="3" y="3.5" width="7.5" height="7.5" rx="1.2"/><rect x="13.5" y="3.5" width="7.5" height="7.5" rx="1.2"/><rect x="3" y="13" width="7.5" height="7.5" rx="1.2"/><rect x="13.5" y="13" width="7.5" height="7.5" rx="1.2"/></symbol>
+  <symbol id="i-input" viewBox="0 0 24 24"><path d="M10 7 15 12l-5 5M15 12H3"/><path d="M14 4h5.5A1.5 1.5 0 0 1 21 5.5v13a1.5 1.5 0 0 1-1.5 1.5H14"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m4.5 12.5 5 5 10-11"/></symbol>
+</svg>
+
+<div class="app" id="app" data-screen="start" data-layout="panel">
+
+  <!-- ============ START (system off) ============ -->
+  <section class="screen screen-start" id="screen-start" aria-labelledby="start-room">
+    <div class="start-top">
+      <span class="conn-pill" data-conn></span>
+      <span class="start-clock" data-clock></span>
+    </div>
+    <div class="start-body">
+      <p class="eyebrow" data-date></p>
+      <h1 class="start-room" id="start-room" data-room-name data-hold-settings>Boardroom</h1>
+      <p class="start-sub" id="start-sub">Displays and audio are off.</p>
+      <button class="btn-start" id="btn-start" type="button">
+        <svg class="ico"><use href="#i-power"/></svg>
+        <span>Start meeting</span>
+      </button>
+      <p class="start-hint" id="start-hint"></p>
+    </div>
+    <div class="start-band" aria-hidden="true"></div>
+  </section>
+
+  <!-- ============ PLEASE WAIT (warming up) ============ -->
+  <section class="screen screen-wait" id="screen-wait" aria-live="polite" aria-labelledby="wait-title">
+    <div class="wait-card">
+      <div class="ring" id="wait-ring" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Start-up progress">
+        <svg viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="ring-track" cx="60" cy="60" r="52"/>
+          <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52"/>
+        </svg>
+        <div class="ring-label"><span class="ring-num" id="wait-secs">20</span><span class="ring-unit">sec</span></div>
+      </div>
+      <div class="wait-text">
+        <h2 id="wait-title">Starting the room</h2>
+        <ol class="steps" id="wait-steps"></ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MAIN (system on) ============ -->
+  <section class="screen screen-main" id="screen-main">
+    <header class="topbar">
+      <div class="topbar-id">
+        <span class="topbar-room" data-room-name data-hold-settings>Boardroom</span>
+        <span class="conn-pill" data-conn></span>
+      </div>
+      <span class="topbar-clock" data-clock></span>
+      <button class="btn-end" id="btn-end" type="button" aria-label="End meeting">
+        <svg class="ico"><use href="#i-power"/></svg><span>End meeting</span>
+      </button>
+    </header>
+
+    <nav class="nav" id="nav" aria-label="Control pages">
+      <button class="nav-btn" type="button" data-nav="sources"><svg class="ico"><use href="#i-sources"/></svg><span>Sources</span></button>
+      <button class="nav-btn" type="button" data-nav="volume"><svg class="ico"><use href="#i-volume"/></svg><span>Volume</span></button>
+      <button class="nav-btn" type="button" data-nav="displays"><svg class="ico"><use href="#i-display"/></svg><span>Displays</span></button>
+    </nav>
+
+    <main class="content" id="content">
+      <!-- Sources -->
+      <section class="pane" id="pane-sources" data-pane="sources" aria-labelledby="h-sources">
+        <div class="pane-head">
+          <h2 id="h-sources" class="pane-title">Sources</h2>
+          <div class="seg" role="radiogroup" aria-label="Routing mode" id="route-mode">
+            <button type="button" role="radio" data-mode="combined"><svg class="ico"><use href="#i-both"/></svg><span>Both displays</span></button>
+            <button type="button" role="radio" data-mode="individual"><svg class="ico"><use href="#i-display"/></svg><span>Each display</span></button>
+          </div>
+        </div>
+
+        <div class="room-map" id="room-map" aria-label="What each display is showing"></div>
+
+        <div class="route-combined" id="route-combined">
+          <div class="tile-grid" id="tiles-combined"></div>
+        </div>
+
+        <div class="route-individual" id="route-individual">
+          <div class="seg seg-displays" role="radiogroup" aria-label="Choose display" id="disp-picker"></div>
+          <div class="disp-cols" id="disp-cols"></div>
+        </div>
+      </section>
+
+      <!-- Volume (own page on phones / small tablets) -->
+      <section class="pane" id="pane-volume" data-pane="volume" aria-labelledby="h-volume">
+        <div class="pane-head"><h2 id="h-volume" class="pane-title">Room volume</h2></div>
+        <div class="vol-big" data-volume-block="big"></div>
+      </section>
+
+      <!-- Displays -->
+      <section class="pane" id="pane-displays" data-pane="displays" aria-labelledby="h-displays">
+        <div class="pane-head"><h2 id="h-displays" class="pane-title">Displays</h2></div>
+        <div class="disp-cards" id="disp-cards"></div>
+      </section>
+    </main>
+
+    <!-- Always-visible volume strip on wide layouts -->
+    <aside class="vol-rail" id="vol-rail" aria-label="Room volume">
+      <div data-volume-block="rail"></div>
+    </aside>
+  </section>
+
+  <!-- ============ END MEETING confirm ============ -->
+  <div class="overlay" id="confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-desc" hidden>
+    <div class="sheet sheet-confirm">
+      <svg class="ico ico-xl"><use href="#i-power"/></svg>
+      <h2 id="confirm-title">End the meeting?</h2>
+      <p id="confirm-desc">Both displays turn off and the room audio mutes.</p>
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" id="confirm-no" type="button">Keep meeting on</button>
+        <button class="btn btn-danger" id="confirm-yes" type="button">End meeting</button>
+      </div>
+      <p class="sheet-note" id="confirm-timer"></p>
+    </div>
+  </div>
+
+  <!-- ============ SETTINGS (hold the room name for 2 s) ============ -->
+  <div class="overlay" id="settings" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden>
+    <form class="sheet sheet-settings" id="settings-form">
+      <div class="sheet-head">
+        <h2 id="settings-title">Panel settings</h2>
+        <button class="icon-btn" type="button" id="settings-close" aria-label="Close settings"><svg class="ico"><use href="#i-close"/></svg></button>
+      </div>
+
+      <fieldset>
+        <legend>Connection</legend>
+        <label class="radio-row"><input type="radio" name="transport" value="demo" id="tr-demo"> <span><b>Demo mode</b><small>Simulates the room so you can try every screen.</small></span></label>
+        <label class="radio-row is-disabled"><input type="radio" name="transport" value="qsys" id="tr-qsys" disabled> <span><b>Q-SYS Core</b><small>Live control through the Boardroom plugin. Coming in the next version.</small></span></label>
+        <div class="field-grid">
+          <label for="set-core">Core address</label><input id="set-core" name="core" type="text" placeholder="192.168.1.50" autocomplete="off" disabled>
+          <label for="set-comp">Plugin code name</label><input id="set-comp" name="component" type="text" placeholder="BoardroomAV" autocomplete="off" disabled>
+          <label for="set-token">Access token</label><input id="set-token" name="token" type="password" placeholder="Only if Access Control is on" autocomplete="off" disabled>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Room</legend>
+        <div class="field-grid">
+          <label for="set-room">Room name</label><input id="set-room" name="room" type="text" maxlength="40">
+          <label for="set-warm">Start-up wait</label>
+          <select id="set-warm" name="warmup"><option value="5">5 seconds (demo)</option><option value="10">10 seconds</option><option value="20">20 seconds</option><option value="30">30 seconds</option></select>
+          <label for="set-idle">Return to Sources after</label>
+          <select id="set-idle" name="idle"><option value="0">Never</option><option value="2">2 minutes idle</option><option value="5">5 minutes idle</option><option value="10">10 minutes idle</option></select>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Look</legend>
+        <div class="field-grid">
+          <label for="set-theme">Theme</label>
+          <select id="set-theme" name="theme"><option value="auto">Match device</option><option value="dark">Dark</option><option value="light">Light</option></select>
+          <label for="set-layout">Layout</label>
+          <select id="set-layout" name="layout"><option value="auto">Automatic</option><option value="phone">Phone</option><option value="tablet">Tablet</option><option value="panel">Wall / table panel</option></select>
+        </div>
+      </fieldset>
+
+      <div class="sheet-actions">
+        <button class="btn btn-ghost" type="button" id="settings-reset">Reset demo room</button>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </div>
+      <p class="sheet-note">Version <span data-version></span> · Settings are saved on this device only.</p>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/transport-demo.js"></script>
+<script src="js/transport-qsys.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
